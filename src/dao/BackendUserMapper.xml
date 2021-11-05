@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.BackendUserMapper">
+
+    <select id="getBackendUser" resultType="entity.BackendUser">
+                SELECT userCode,userName,d.valueName as usertypes,userPassword FROM backend_user as u
+                INNER JOIN data_dictionary AS d ON u.userType=d.id
+                WHERE userCode =#{userCode}
+    </select>
+</mapper>

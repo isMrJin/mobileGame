@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.AppVersionMapper">
+    <insert id="appVersionAdd" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO `app_version` (
+      `appId`,
+      `versionNo`,
+      `versionInfo`,
+      `publishStatus`,
+      `downloadLink`,
+      `versionSize`,
+      `creationDate`,
+      `apkLocPath`,
+      `apkFileName`
+    )
+    VALUES
+      (
+        #{appVersion.appid},
+        #{appVersion.versionno},
+        #{appVersion.versioninfo},
+        #{appVersion.publishstatus},
+        #{appVersion.downloadlink},
+        #{appVersion.versionsize},
+        #{appVersion.creationdate},
+        #{appVersion.apklocpath},
+        #{appVersion.apkfilename}
+      ) ;
+    </insert>
+    <update id="updateVersion">
+        UPDATE app_version SET versionNo=#{appVersion.versionno} , versionSize=#{appVersion.versionsize}
+        ,versionInfo=#{appVersion.versioninfo} ,apkFileName=#{appVersion.apkfilename} ,apkLocPath=#{appVersion.apklocpath}
+        WHERE id=#{appVersion.id}
+    </update>
+    <update id="updateUpload">
+        UPDATE `app_version` SET `downloadLink`=NULL,`apkLocPath`=NULL,`apkFileName`=NULL WHERE id=#{id}
+    </update>
+    <delete id="delVersion">
+    delete from app_version where appId=#{aid}
+    </delete>
+
+    <select id="getAppVersion" resultType="entity.AppVersion">
+        SELECT versionNo ,versionSize FROM app_version AS version WHERE 1=1
+        <if test="versionid!=0">
+           and version.id=#{versionid}
+        </if>
+    </select>
+    <select id="getAppversionList" resultType="entity.AppVersion">
+        SELECT info.softwareName AS appName,version.versionSize,version.versionNo,dictionarry.valueName AS publishStatusName,version.apkFileName,version.modifyDate,version.downloadLink FROM app_version AS version
+        INNER JOIN app_info AS info ON version.appId = info.id
+        INNER JOIN data_dictionary AS dictionarry ON dictionarry.valueId=version.publishStatus
+        WHERE version.appId = #{appId} AND dictionarry.typeCode ='APP_STATUS'
+    </select>
+    <select id="getAppVersionView" resultType="entity.AppVersion">
+        SELECT version.id, info.softwareName AS appName,version.versionInfo,version.versionSize,version.versionNo,version.apkFileName,version.modifyDate,version.downloadLink FROM app_version AS version
+        INNER JOIN app_info AS info ON version.id = info.versionId
+        WHERE version.appId = #{appId} AND info.versionId=#{versionId}
+    </select>
+</mapper>
